@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="app/src/main/res/drawable/card_icon_weather_shape.xml" value="0.151" />
+        <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.215" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.27056579589843754" />
+        <entry key="app/src/main/res/layout/shape.xml" value="0.20677083333333332" />
+      </map>
+    </option>
+  </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_16_PREVIEW" project-jdk-name="adopt-openjdk-16" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="adopt-openjdk-16" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
 </project>

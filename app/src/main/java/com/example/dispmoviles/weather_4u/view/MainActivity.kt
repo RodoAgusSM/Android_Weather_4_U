@@ -1,7 +1,8 @@
-package com.example.dispmoviles.weather_4u
+package com.example.dispmoviles.weather_4u.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.dispmoviles.weather_4u.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
