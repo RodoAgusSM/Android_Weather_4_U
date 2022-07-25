@@ -79,28 +79,28 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/temp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="sans-serif"
-                            android:text="18°C"
                             android:textColor="@color/black"
                             android:textSize="20sp"
                             android:textStyle="bold" />
 
                         <TextView
+                            android:id="@+id/feels_like"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="sans-serif"
-                            android:text="Sensación térmica: 18°C"
                             android:textColor="@color/black"
                             android:textSize="15sp"
                             android:textStyle="normal" />
 
                         <TextView
+                            android:id="@+id/description"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="sans-serif"
-                            android:text="nubes dispersas"
                             android:textColor="@color/black"
                             android:textSize="15sp"
                             android:textStyle="normal" />
@@ -115,28 +115,28 @@
                             android:textStyle="normal" />
 
                         <TextView
+                            android:id="@+id/humidity"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="sans-serif"
-                            android:text="Humedad: 79%"
                             android:textColor="@color/black"
                             android:textSize="15sp"
                             android:textStyle="normal" />
 
                         <TextView
+                            android:id="@+id/pressure"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="sans-serif"
-                            android:text="Presión: 1012 hPa"
                             android:textColor="@color/black"
                             android:textSize="15sp"
                             android:textStyle="normal" />
 
                         <TextView
+                            android:id="@+id/wind"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="sans-serif"
-                            android:text="Viento: N 21 km/h"
                             android:textColor="@color/black"
                             android:textSize="15sp"
                             android:textStyle="normal" />

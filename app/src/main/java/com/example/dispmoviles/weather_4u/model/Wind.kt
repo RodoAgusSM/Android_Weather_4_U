@@ -1,10 +1,11 @@
 package com.example.dispmoviles.weather_4u.model
 
 import com.google.gson.annotations.SerializedName
+import kotlin.math.truncate
 
 class Wind {
     @SerializedName("speed")
-    private var speed: Float? = null
+    private var speed: Float = 0.0F
 
     @SerializedName("deg")
     private var deg: Float? = null
@@ -12,11 +13,11 @@ class Wind {
     @SerializedName("gust")
     private var gust: Float? = null
 
-    fun getSpeed(): Float? {
+    fun getSpeed(): Float {
         return speed
     }
 
-    fun setSpeed(speed: Float?) {
+    fun setSpeed(speed: Float) {
         this.speed = speed
     }
 
@@ -35,4 +36,36 @@ class Wind {
     fun setGust(gust: Float?) {
         this.gust = gust
     }
+
+    val directions =  arrayOf<String>(
+    "N",
+    "NNE",
+    "NE",
+    "ENE",
+    "E",
+    "ESE",
+    "SE",
+    "SSE",
+    "S",
+    "SSO",
+    "SO",
+    "OSO",
+    "O",
+    "ONO",
+    "NO",
+    "NNO",
+    );
+
+    private fun obtainCardinal(): Int? {
+        return (this.getDeg()?.plus(11.25))?.div(22.5)?.toInt()
+    }
+
+    fun windDirection(): String {
+       return this.directions[this.obtainCardinal()?.rem(16)!!]
+    }
+
+    fun windSpeed(): Int {
+       return (truncate(this.speed)).times(3.6).toInt()
+    }
+
 }

@@ -6,7 +6,7 @@ class Main {
     @SerializedName("temp")
     private var temp: Float? = null
 
-    @SerializedName("feel_like")
+    @SerializedName("feels_like")
     private var feelsLike: Float? = null
 
     @SerializedName("temp_main")

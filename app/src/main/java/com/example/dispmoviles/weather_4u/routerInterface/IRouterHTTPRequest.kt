@@ -2,6 +2,7 @@ package com.example.dispmoviles.weather_4u.routerInterface
 
 import android.provider.Settings.Secure.getString
 import com.example.dispmoviles.weather_4u.R
+import com.example.dispmoviles.weather_4u.model.Forecast
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
@@ -18,5 +19,5 @@ interface IRouterHTTPRequest {
     @GET("weather")
     fun getWeather(
     @Query("q") city: String?,  @Query("units") metric: String?, @Query("lang") language: String?, @Query("APPID") key: String?
-    ): Call<ResponseBody>?
+    ): Call<Forecast>?
 }
