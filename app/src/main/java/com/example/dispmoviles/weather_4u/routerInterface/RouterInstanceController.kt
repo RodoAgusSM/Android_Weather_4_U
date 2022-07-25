@@ -7,8 +7,8 @@ import retrofit2.Retrofit
 
 class RouterInstanceController() {
     private var retrofit: Retrofit? = null
+    private var retrofitIcon: Retrofit? = null
     fun getRetrofitInstance(URL: String?): Retrofit? {
-        //cambiar URL por BASE_URL
         if (retrofit == null || retrofit != null) {
             retrofit = Retrofit.Builder()
                 .baseUrl(URL)
@@ -16,5 +16,15 @@ class RouterInstanceController() {
                 .build()
         }
         return retrofit
+    }
+
+    fun getRetrofitInstanceIcon(URL: String?): Retrofit? {
+        if (retrofitIcon == null || retrofitIcon != null) {
+            retrofitIcon = Retrofit.Builder()
+                .baseUrl(URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+        }
+        return retrofitIcon
     }
 }

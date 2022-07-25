@@ -6,14 +6,27 @@
     android:layout_height="match_parent"
     tools:context=".view.MainActivity">
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#75cfb8"
+        android:gravity="center"
         android:orientation="horizontal">
 
+        <ProgressBar
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:id="@+id/progress_bar"
+            android:indeterminateOnly="true"
+            android:layout_gravity="center_vertical"
+            android:layout_centerInParent="true"
+            android:keepScreenOn="true"
+            android:indeterminate="true"
+            android:indeterminateTintMode="src_atop"
+            android:indeterminateTint="@color/green"/>
+
         <LinearLayout
+            android:id="@+id/data_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/card_weather_shape"
@@ -34,7 +47,8 @@
                     android:layout_height="180dp"
                     android:src="@drawable/half_sun"
                     app:layout_constraintBaseline_toTopOf="parent"
-                    tools:srcCompat="@tools:sample/avatars" />
+                    tools:srcCompat="@tools:sample/avatars"
+                    android:scaleType="fitXY"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -49,25 +63,24 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:gravity="center"
                     android:orientation="horizontal">
 
                     <LinearLayout
                         android:layout_width="180dp"
-                        android:layout_height="80dp"
+                        android:layout_height="85dp"
                         android:layout_weight="1"
                         android:background="@drawable/card_icon_weather_shape"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:layout_gravity="center">
 
                         <ImageView
-                            android:id="@+id/imageView4"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:id="@+id/weather_icon"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
                             android:layout_gravity="center"
-                            android:layout_margin="10dp"
                             android:layout_weight="1"
-                            android:src="@drawable/half_sun"
-                            tools:srcCompat="@tools:sample/avatars" />
+                            tools:srcCompat="@tools:sample/avatars"
+                            android:scaleType="fitXY" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -78,75 +91,115 @@
                         android:padding="20dp"
                         android:orientation="vertical">
 
-                        <TextView
-                            android:id="@+id/temp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif"
-                            android:textColor="@color/black"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="bottom"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
 
-                        <TextView
-                            android:id="@+id/feels_like"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif"
-                            android:textColor="@color/black"
-                            android:textSize="15sp"
-                            android:textStyle="normal" />
+                            <TextView
+                                android:id="@+id/temp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="sans-serif"
+                                android:textColor="@color/black"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
 
-                        <TextView
-                            android:id="@+id/description"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif"
-                            android:textColor="@color/black"
-                            android:textSize="15sp"
-                            android:textStyle="normal" />
+                            <TextView
+                                android:id="@+id/feels_like"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="sans-serif"
+                                android:textColor="@color/black"
+                                android:textSize="15sp"
+                                android:textStyle="normal" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif"
-                            android:text="15:13 23/7/2022"
-                            android:textColor="@color/black"
-                            android:textSize="15sp"
-                            android:textStyle="normal" />
+                            <TextView
+                                android:id="@+id/description"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="sans-serif"
+                                android:textColor="@color/black"
+                                android:textSize="15sp"
+                                android:textStyle="normal" />
 
-                        <TextView
-                            android:id="@+id/humidity"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif"
-                            android:textColor="@color/black"
-                            android:textSize="15sp"
-                            android:textStyle="normal" />
+                        </LinearLayout>
 
-                        <TextView
-                            android:id="@+id/pressure"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif"
-                            android:textColor="@color/black"
-                            android:textSize="15sp"
-                            android:textStyle="normal" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="top"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
 
-                        <TextView
-                            android:id="@+id/wind"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif"
-                            android:textColor="@color/black"
-                            android:textSize="15sp"
-                            android:textStyle="normal" />
+
+                            <TextView
+                                android:id="@+id/humidity"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="sans-serif"
+                                android:textColor="@color/black"
+                                android:textSize="15sp"
+                                android:textStyle="normal" />
+
+                            <TextView
+                                android:id="@+id/pressure"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="sans-serif"
+                                android:textColor="@color/black"
+                                android:textSize="15sp"
+                                android:textStyle="normal" />
+
+                            <TextView
+                                android:id="@+id/wind"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="sans-serif"
+                                android:textColor="@color/black"
+                                android:textSize="15sp"
+                                android:textStyle="normal" />
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:gravity="bottom"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:id="@+id/time"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:fontFamily="sans-serif"
+                                        android:textColor="@color/black"
+                                        android:textSize="13sp"
+                                        android:textStyle="normal"
+                                        android:gravity="bottom"/>
+
+                                    <TextView
+                                        android:id="@+id/date"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:fontFamily="sans-serif"
+                                        android:textColor="@color/black"
+                                        android:textSize="13sp"
+                                        android:textStyle="normal"
+                                        android:gravity="bottom"/>
+                                </LinearLayout>
+
+                        </LinearLayout>
 
                     </LinearLayout>
+
                 </LinearLayout>
 
             </LinearLayout>
 
         </LinearLayout>
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

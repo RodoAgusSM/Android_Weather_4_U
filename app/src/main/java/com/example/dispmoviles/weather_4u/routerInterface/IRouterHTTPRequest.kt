@@ -1,13 +1,9 @@
 package com.example.dispmoviles.weather_4u.routerInterface
 
-import android.provider.Settings.Secure.getString
-import com.example.dispmoviles.weather_4u.R
 import com.example.dispmoviles.weather_4u.model.Forecast
 import okhttp3.ResponseBody
-import org.json.JSONObject
 import retrofit2.Call
-import retrofit2.http.GET
-import retrofit2.http.Query
+import retrofit2.http.*
 
 /*private val key: String = getString(R.string.api_key)
 
@@ -18,6 +14,9 @@ fun getString(apiEndpoint: Any): String {
 interface IRouterHTTPRequest {
     @GET("weather")
     fun getWeather(
-    @Query("q") city: String?,  @Query("units") metric: String?, @Query("lang") language: String?, @Query("APPID") key: String?
+        @Query("q") city: String?,  @Query("units") metric: String?, @Query("lang") language: String?, @Query("APPID") key: String?
     ): Call<Forecast>?
+
+    @GET("{iconPath}")
+    fun getWeatherIcon(@Header("Content-Type") cType: String?, @Path(value = "iconPath", encoded = true) iconPath: String): Call<ResponseBody>?
 }

@@ -1,38 +1,43 @@
 package com.example.dispmoviles.weather_4u.view
 
 import android.content.pm.ActivityInfo
+import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.widget.EditText
-import android.widget.RatingBar
+import android.view.View
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.dispmoviles.weather_4u.R
 import com.example.dispmoviles.weather_4u.model.Forecast
-import com.example.dispmoviles.weather_4u.model.Weather
 import com.example.dispmoviles.weather_4u.routerInterface.IRouterHTTPRequest
 import com.example.dispmoviles.weather_4u.routerInterface.RouterInstanceController
 import okhttp3.ResponseBody
-import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.io.IOException
+import java.util.*
+
 
 class MainActivity : AppCompatActivity() {
-
-    //private val url: String = getString(R.string.api_endpoint)
+    val calendar = Calendar.getInstance()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        getWeather()
+        handleLoading(true)
+        getWeather();
+        fetchWeather();
     }
 
     private fun getWeather() {
-        val router: IRouterHTTPRequest? = RouterInstanceController().getRetrofitInstance("https://api.openweathermap.org/data/2.5/")?.create(
+        val weather_endpoint: String = getString(R.string.api_endpoint)
+        val api_key: String = getString(R.string.api_key)
+        val router: IRouterHTTPRequest? = RouterInstanceController().getRetrofitInstance(weather_endpoint)?.create(
             IRouterHTTPRequest::class.java
         )
-        router?.getWeather("Montevideo", "Metric", "sp", "d4e98b5087ab0e565089d21ec367ff89")
+        router?.getWeather("Montevideo", "Metric", "sp", api_key)
             ?.enqueue(object : Callback<Forecast> {
                 override fun onResponse(
                     call: Call<Forecast>,
@@ -40,25 +45,67 @@ class MainActivity : AppCompatActivity() {
                 ) {
                     if (response.isSuccessful) {
                         val forecast: Forecast? = response.body()
+                        getWeatherIcon(forecast)
                         populateInterface(forecast)
-
-                        println("SUCCESS FETCHING DATA $forecast")
                     } else {
-                       println("SOMETHING HAPPENED")
+                       println("SOMETHING HAPPENED GET_WEATHER")
                     }
+                    handleLoading(false)
                 }
 
                 override fun onFailure(call: Call<Forecast>, t: Throwable) {
-                    println("SOMETHING FAILED " + t.message)
+                    handleLoading(false)
+                    println("SOMETHING FAILED GET_WEATHER " + t.message)
                     //changeToError(t.message)
                 }
             })
     }
 
+    private fun getWeatherIcon(forecast: Forecast?) {
+        val iconExtension = forecast?.getWeather()?.get(0)?.getIcon() + "@" + getString(R.string.icon_extension)
+        val weather_icon_endpoint: String = getString(R.string.api_icon)
+        val router: IRouterHTTPRequest? = RouterInstanceController().getRetrofitInstanceIcon(weather_icon_endpoint)?.create(
+            IRouterHTTPRequest::class.java
+        )
+        router?.getWeatherIcon("application/json", iconExtension)
+            ?.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(
+                    call: Call<ResponseBody>,
+                    response: Response<ResponseBody>
+                ) {
+                    println("SUCCESS FETCHING DATA ICON ${response.body()}")
+                    if (response.isSuccessful) {
+                        val icon: ResponseBody? = response.body()
+                        generateWeatherIcon(icon)
+                    } else {
+                        println("SOMETHING HAPPENED GET_WEATHER_ICON")
+                    }
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    println("SOMETHING FAILED GET_WEATHER_ICON" + t.message)
+                }
+            })
+    }
+
+    private fun generateWeatherIcon(icon: ResponseBody?) {
+        val weather_icon: ImageView = findViewById(R.id.weather_icon)
+        val iconBytes = icon?.bytes()
+        val bitmap = iconBytes?.let { BitmapFactory.decodeByteArray(iconBytes, 0, it.size) }
+        weather_icon.setImageBitmap(bitmap)
+    }
+
+    private fun fetchWeather() {
+        Timer().scheduleAtFixedRate(object : TimerTask() {
+            override fun run() {
+                getWeather()
+            }
+        }, 0, 1200000)
+    }
+
     private fun populateInterface(forecast: Forecast?){
         val temp: TextView = findViewById(R.id.temp)
         temp.setText(forecast?.getMain()?.getTemp().toString().split('.')[0] + " " + getResources().getStringArray(R.array.spanish).get(0))
-        println("SUCCESS FETCHING DATA ${forecast?.getMain()?.getFeelsLike()}")
         val feelsLike: TextView = findViewById(R.id.feels_like)
         feelsLike.setText(getResources().getStringArray(R.array.spanish).get(1) + " " + forecast?.getMain()?.getFeelsLike().toString().split('.')[0] + getResources().getStringArray(R.array.spanish).get(0))
         val description: TextView = findViewById(R.id.description)
@@ -69,5 +116,35 @@ class MainActivity : AppCompatActivity() {
         pressure.setText(getResources().getStringArray(R.array.spanish).get(4) + " " + forecast?.getMain()?.getPressure().toString().split('.')[0] + " " + getResources().getStringArray(R.array.spanish).get(5))
         val wind: TextView = findViewById(R.id.wind)
         wind.setText(getResources().getStringArray(R.array.spanish).get(6) + " " + forecast?.getWind()?.windDirection() + " " + forecast?.getWind()?.windSpeed() + " " + getResources().getStringArray(R.array.spanish).get(7))
+        val dateTime: Date = Date()
+        calendar.time = dateTime
+        val hours = calendar.get(Calendar.HOUR_OF_DAY)
+        val minutes = calendar.get(Calendar.MINUTE)
+        var castedMin: String? = null
+        if(minutes < 10) castedMin = "0" + minutes.toString()
+        else castedMin = minutes.toString()
+        val day = calendar.get(Calendar.DATE)
+        val month = calendar.get(Calendar.MONTH)
+        val year = calendar.get(Calendar.YEAR)
+        val parsedTime = "$hours:$castedMin"
+        val time: TextView = findViewById(R.id.time)
+        time.setText(getResources().getStringArray(R.array.spanish).get(8) + " " + parsedTime)
+        val parsedDate = "$day/$month/$year"
+        val date: TextView = findViewById(R.id.date)
+        date.setText(getResources().getStringArray(R.array.spanish).get(9) + " " + parsedDate)
+
+    }
+
+    private fun handleLoading(isLoading: Boolean) {
+        val progressBar: ProgressBar = findViewById(R.id.progress_bar)
+        val data_container: LinearLayout = findViewById(R.id.data_container)
+        if(isLoading) {
+            progressBar.setVisibility(View.VISIBLE)
+            data_container.setVisibility(View.GONE)
+        }
+        else{
+            progressBar.setVisibility(View.GONE)
+            data_container.setVisibility(View.VISIBLE)
+        }
     }
 }
