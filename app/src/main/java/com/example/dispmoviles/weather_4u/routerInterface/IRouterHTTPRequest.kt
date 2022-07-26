@@ -14,7 +14,7 @@ fun getString(apiEndpoint: Any): String {
 interface IRouterHTTPRequest {
     @GET("weather")
     fun getWeather(
-        @Query("q") city: String?,  @Query("units") metric: String?, @Query("lang") language: String?, @Query("APPID") key: String?
+        @Query("lat") lat: Double?, @Query("lon") lon: Double?,  @Query("units") metric: String?, @Query("lang") language: String?, @Query("APPID") key: String?
     ): Call<Forecast>?
 
     @GET("{iconPath}")

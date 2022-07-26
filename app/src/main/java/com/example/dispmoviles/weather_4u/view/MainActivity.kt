@@ -4,12 +4,10 @@ import android.content.pm.ActivityInfo
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.View
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.ProgressBar
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.example.dispmoviles.weather_4u.R
+import com.example.dispmoviles.weather_4u.model.City
 import com.example.dispmoviles.weather_4u.model.Forecast
 import com.example.dispmoviles.weather_4u.routerInterface.IRouterHTTPRequest
 import com.example.dispmoviles.weather_4u.routerInterface.RouterInstanceController
@@ -21,13 +19,16 @@ import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
+    val cityClass: City = City()
     val calendar = Calendar.getInstance()
+    var city: String = "Montevideo"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         handleLoading(true)
         getWeather();
+        generateSpinner();
         fetchWeather();
     }
 
@@ -37,7 +38,8 @@ class MainActivity : AppCompatActivity() {
         val router: IRouterHTTPRequest? = RouterInstanceController().getRetrofitInstance(weather_endpoint)?.create(
             IRouterHTTPRequest::class.java
         )
-        router?.getWeather("Montevideo", "Metric", "sp", api_key)
+        val coordinates = cityClass.getCityCoordinates(city)
+        router?.getWeather(coordinates?.getLat(), coordinates?.getLon(), "Metric", "sp", api_key)
             ?.enqueue(object : Callback<Forecast> {
                 override fun onResponse(
                     call: Call<Forecast>,
@@ -63,7 +65,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun getWeatherIcon(forecast: Forecast?) {
         val iconExtension = forecast?.getWeather()?.get(0)?.getIcon() + "@" + getString(R.string.icon_extension)
-        val weather_icon_endpoint: String = getString(R.string.api_icon)
+        val weather_icon_endpoint : String = getString(R.string.api_icon)
         val router: IRouterHTTPRequest? = RouterInstanceController().getRetrofitInstanceIcon(weather_icon_endpoint)?.create(
             IRouterHTTPRequest::class.java
         )
@@ -88,6 +90,40 @@ class MainActivity : AppCompatActivity() {
             })
     }
 
+     private fun generateSpinner() {
+         val spinner = findViewById<Spinner>(R.id.city_spinner)
+         val items = arrayOf(
+             "Montevideo",
+             "Punta del Este",
+             "Rocha",
+             "Colonia",
+             "Canelones" ,
+             "Salto",
+             "Paysandú",
+             "Tacuarembo",
+             "Durazno",
+             "Rivera",
+             "Florida",
+             "Cerro Largo",
+             "Río Negro" ,
+             "Soriano",
+             "Flores",
+             "Buenos Aires",
+             "New York"
+         )
+         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, items)
+         spinner.adapter = adapter
+         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+             override fun onNothingSelected(parent: AdapterView<*>?) {}
+             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val item: Any = spinner.selectedItem
+                 city = item as String
+                 getWeather()
+             }
+         }
+     }
+
+
     private fun generateWeatherIcon(icon: ResponseBody?) {
         val weather_icon: ImageView = findViewById(R.id.weather_icon)
         val iconBytes = icon?.bytes()
@@ -104,6 +140,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun populateInterface(forecast: Forecast?){
+        val location: TextView = findViewById(R.id.city)
+        location.setText(getResources().getStringArray(R.array.spanish).get(10) + " " + city)
         val temp: TextView = findViewById(R.id.temp)
         temp.setText(forecast?.getMain()?.getTemp().toString().split('.')[0] + " " + getResources().getStringArray(R.array.spanish).get(0))
         val feelsLike: TextView = findViewById(R.id.feels_like)
@@ -132,7 +170,6 @@ class MainActivity : AppCompatActivity() {
         val parsedDate = "$day/$month/$year"
         val date: TextView = findViewById(R.id.date)
         date.setText(getResources().getStringArray(R.array.spanish).get(9) + " " + parsedDate)
-
     }
 
     private fun handleLoading(isLoading: Boolean) {

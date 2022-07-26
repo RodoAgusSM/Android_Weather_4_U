@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Weather_4U</string>
+    <string name="app_name">Weather4U</string>
     <string name="api_endpoint">https://api.openweathermap.org/data/2.5/</string>
     <string name="api_icon">https://openweathermap.org/img/wn/</string>
     <string name="icon_extension">4x.png</string>
@@ -13,7 +13,8 @@
         <item>hPa</item>
         <item>Viento:</item>
         <item>km/h</item>
-        <item>Actualizado a las: </item>
-        <item>Fecha: </item>
+        <item>Actualizado a las:</item>
+        <item>Fecha:</item>
+        <item>Clima en</item>
     </string-array>
 </resources>
