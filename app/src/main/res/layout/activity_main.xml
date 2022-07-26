@@ -65,7 +65,7 @@
                     style="@style/Widget.AppCompat.Spinner.Underlined"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
+                    android:layout_marginTop="10dp"
                     android:minHeight="48dp"
                     android:popupBackground="@color/pale_rose" />
 
@@ -81,7 +81,7 @@
                         android:layout_weight="1"
                         android:background="@drawable/card_icon_weather_shape"
                         android:orientation="horizontal"
-                        android:layout_marginTop="110dp">
+                        android:layout_marginTop="55dp">
 
                         <ImageView
                             android:id="@+id/weather_icon"
@@ -106,7 +106,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_weight="0.5"
-                            android:layout_marginTop="60dp"
+                            android:layout_marginTop="20dp"
                             android:gravity="top"
                             android:orientation="vertical">
 
