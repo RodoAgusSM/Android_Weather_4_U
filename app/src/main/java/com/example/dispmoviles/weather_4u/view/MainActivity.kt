@@ -158,7 +158,7 @@ class MainActivity : AppCompatActivity() {
         calendar.time = dateTime
         val hours = calendar.get(Calendar.HOUR_OF_DAY)
         val minutes = calendar.get(Calendar.MINUTE)
-        var castedMin: String? = null
+        var castedMin: String?
         if(minutes < 10) castedMin = "0" + minutes.toString()
         else castedMin = minutes.toString()
         val day = calendar.get(Calendar.DATE)
