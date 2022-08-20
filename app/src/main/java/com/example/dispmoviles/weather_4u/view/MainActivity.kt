@@ -1,5 +1,6 @@
 package com.example.dispmoviles.weather_4u.view
 
+import android.content.Context
 import android.content.pm.ActivityInfo
 import android.graphics.BitmapFactory
 import android.os.Bundle
@@ -21,7 +22,8 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
     private val cityClass: City = City()
     private val calendar: Calendar = Calendar.getInstance()
-    var city: String = "Montevideo"
+    private var city: String = "Montevideo"
+    private var language: Int = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -32,14 +34,41 @@ class MainActivity : AppCompatActivity() {
         fetchWeather();
     }
 
+    private fun setData(language: String) {
+        val mPrefs = getPreferences(Context.MODE_PRIVATE)
+        val editor = mPrefs.edit()
+        editor.putString("language", language)
+        editor.apply()
+    }
+
+    private fun getData(key: String): String? {
+        return try {
+            val mPrefs = getPreferences(Context.MODE_PRIVATE)
+            if (mPrefs.contains(key)) {
+                mPrefs.getString(key, null)
+            } else null
+        } catch (error: Error) {
+            println("ACA CAMBIANDO$error")
+            null
+        }
+    }
+
     private fun getWeather() {
         val weatherEndpoint: String = getString(R.string.api_endpoint)
         val apiKey: String = getString(R.string.api_key)
-        val router: IRouterHTTPRequest? = RouterInstanceController().getRetrofitInstance(weatherEndpoint)?.create(
-            IRouterHTTPRequest::class.java
-        )
+        val router: IRouterHTTPRequest? =
+            RouterInstanceController().getRetrofitInstance(weatherEndpoint)?.create(
+                IRouterHTTPRequest::class.java
+            )
         val coordinates = cityClass.getCityCoordinates(city)
-        router?.getWeather(coordinates?.getLat(), coordinates?.getLon(), "Metric", resources.getStringArray(R.array.english).get(13), apiKey)
+        language = getLanguage()
+        router?.getWeather(
+            coordinates?.getLat(),
+            coordinates?.getLon(),
+            "Metric",
+            resources.getStringArray(language)[13],
+            apiKey
+        )
             ?.enqueue(object : Callback<Forecast> {
                 override fun onResponse(
                     call: Call<Forecast>,
@@ -50,7 +79,7 @@ class MainActivity : AppCompatActivity() {
                         getWeatherIcon(forecast)
                         populateInterface(forecast)
                     } else {
-                       println("SOMETHING HAPPENED GET_WEATHER")
+                        println("SOMETHING HAPPENED GET_WEATHER")
                     }
                     handleLoading(false)
                 }
@@ -64,11 +93,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getWeatherIcon(forecast: Forecast?) {
-        val iconExtension = forecast?.getWeather()?.get(0)?.getIcon() + "@" + getString(R.string.icon_extension)
-        val weatherIconEndpoint : String = getString(R.string.api_icon)
-        val router: IRouterHTTPRequest? = RouterInstanceController().getRetrofitInstanceIcon(weatherIconEndpoint)?.create(
-            IRouterHTTPRequest::class.java
-        )
+        val iconExtension =
+            forecast?.getWeather()?.get(0)?.getIcon() + "@" + getString(R.string.icon_extension)
+        val weatherIconEndpoint: String = getString(R.string.api_icon)
+        val router: IRouterHTTPRequest? =
+            RouterInstanceController().getRetrofitInstanceIcon(weatherIconEndpoint)?.create(
+                IRouterHTTPRequest::class.java
+            )
         router?.getWeatherIcon("application/json", iconExtension)
             ?.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(
@@ -90,38 +121,43 @@ class MainActivity : AppCompatActivity() {
             })
     }
 
-     private fun generateSpinner() {
-         val spinner = findViewById<Spinner>(R.id.city_spinner)
-         val items = arrayOf(
-             "Montevideo",
-             "Punta del Este",
-             "Rocha",
-             "Colonia",
-             "Canelones" ,
-             "Salto",
-             "Paysandú",
-             "Tacuarembo",
-             "Durazno",
-             "Rivera",
-             "Florida",
-             "Cerro Largo",
-             "Río Negro" ,
-             "Soriano",
-             "Flores",
-             "Buenos Aires",
-             "New York"
-         )
-         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, items)
-         spinner.adapter = adapter
-         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-             override fun onNothingSelected(parent: AdapterView<*>?) {}
-             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+    private fun generateSpinner() {
+        val spinner = findViewById<Spinner>(R.id.city_spinner)
+        val items = arrayOf(
+            "Montevideo",
+            "Punta del Este",
+            "Rocha",
+            "Colonia",
+            "Canelones",
+            "Salto",
+            "Paysandú",
+            "Tacuarembo",
+            "Durazno",
+            "Rivera",
+            "Florida",
+            "Cerro Largo",
+            "Río Negro",
+            "Soriano",
+            "Flores",
+            "Buenos Aires",
+            "New York"
+        )
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, items)
+        spinner.adapter = adapter
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
                 val item: Any = spinner.selectedItem
-                 city = item as String
-                 getWeather()
-             }
-         }
-     }
+                city = item as String
+                getWeather()
+            }
+        }
+    }
 
 
     private fun generateWeatherIcon(icon: ResponseBody?) {
@@ -139,52 +175,108 @@ class MainActivity : AppCompatActivity() {
         }, 0, 1200000)
     }
 
-    private fun populateInterface(forecast: Forecast?){
+    private fun populateInterface(forecast: Forecast?) {
         val location: TextView = findViewById(R.id.city)
-        location.setText(resources.getStringArray(R.array.english).get(10) + " " + city)
+        location.setText(resources.getStringArray(language)[10] + " " + city)
         val temp: TextView = findViewById(R.id.temp)
-        temp.setText(forecast?.getMain()?.getTemp().toString().split('.')[0] + " " + resources.getStringArray(R.array.english).get(0))
+        temp.setText(
+            forecast?.getMain()?.getTemp().toString()
+                .split('.')[0] + " " + resources.getStringArray(language)[0]
+        )
         val feelsLike: TextView = findViewById(R.id.feels_like)
-        feelsLike.setText(resources.getStringArray(R.array.english).get(1) + " " + forecast?.getMain()?.getFeelsLike().toString().split('.')[0] + resources.getStringArray(R.array.english).get(0))
+        feelsLike.setText(
+            resources.getStringArray(language)[1] + " " + forecast?.getMain()?.getFeelsLike()
+                .toString().split('.')[0] + resources.getStringArray(language)[0]
+        )
         val description: TextView = findViewById(R.id.description)
         description.setText(forecast?.getWeather()?.get(0)?.getDescription())
         val humidity: TextView = findViewById(R.id.humidity)
-        humidity.setText(resources.getStringArray(R.array.english).get(2) + " " + forecast?.getMain()?.getHumidity().toString().split('.')[0] + resources.getStringArray(R.array.english).get(3))
+        humidity.setText(
+            resources.getStringArray(language)[2] + " " + forecast?.getMain()?.getHumidity()
+                .toString().split('.')[0] + resources.getStringArray(language)[3]
+        )
         val pressure: TextView = findViewById(R.id.pressure)
-        pressure.setText(resources.getStringArray(R.array.english).get(4) + " " + forecast?.getMain()?.getPressure().toString().split('.')[0] + " " + resources.getStringArray(R.array.english).get(5))
+        pressure.setText(
+            resources.getStringArray(language)[4] + " " + forecast?.getMain()?.getPressure()
+                .toString().split('.')[0] + " " + resources.getStringArray(language)[5]
+        )
         val wind: TextView = findViewById(R.id.wind)
-        wind.setText(resources.getStringArray(R.array.english).get(6) + " " + forecast?.getWind()?.windDirection() + " " + forecast?.getWind()?.windSpeed() + " " + resources.getStringArray(R.array.english).get(7))
+        wind.setText(
+            resources.getStringArray(language)[6] + " " + forecast?.getWind()
+                ?.windDirection() + " " + forecast?.getWind()
+                ?.windSpeed() + " " + resources.getStringArray(language)[7]
+        )
         val dateTime: Date = Date()
         calendar.time = dateTime
         val hours = calendar.get(Calendar.HOUR_OF_DAY)
         val minutes = calendar.get(Calendar.MINUTE)
-        var castedMin: String? = if(minutes < 10) "0$minutes"
+        var castedMin: String? = if (minutes < 10) "0$minutes"
         else minutes.toString()
         val day = calendar.get(Calendar.DATE)
         val month = calendar.get(Calendar.MONTH) + 1
         val year = calendar.get(Calendar.YEAR)
         val parsedTime = "$hours:$castedMin"
         val time: TextView = findViewById(R.id.time)
-        time.setText(resources.getStringArray(R.array.english).get(8) + " " + parsedTime)
+        time.setText(resources.getStringArray(language)[8] + " " + parsedTime)
         val parsedDate = "$day/$month/$year"
         val date: TextView = findViewById(R.id.date)
-        date.setText(resources.getStringArray(R.array.english).get(9) + " " + parsedDate)
+        date.setText(resources.getStringArray(language)[9] + " " + parsedDate)
         val sunrise: TextView = findViewById(R.id.sunrise)
-        sunrise.setText(resources.getStringArray(R.array.english).get(11) + " " + forecast?.getSys()?.sunsetSunriseTime(true))
+        sunrise.setText(
+            resources.getStringArray(language)[11] + " " + forecast?.getSys()
+                ?.sunsetSunriseTime(true)
+        )
         val sunset: TextView = findViewById(R.id.sunset)
-        sunset.setText(resources.getStringArray(R.array.english).get(12) + " " + forecast?.getSys()?.sunsetSunriseTime(false))
+        sunset.setText(
+            resources.getStringArray(language)[12] + " " + forecast?.getSys()
+                ?.sunsetSunriseTime(false)
+        )
+        val englishButton: TextView = findViewById(R.id.english)
+        englishButton.setText(
+            resources.getStringArray(language)[14]
+        )
+        val spanishButton: TextView = findViewById(R.id.spanish)
+        spanishButton.setText(
+            resources.getStringArray(language)[15]
+        )
     }
 
     private fun handleLoading(isLoading: Boolean) {
         val progressBar: ProgressBar = findViewById(R.id.progress_bar)
         val dataContainer: LinearLayout = findViewById(R.id.data_container)
-        if(isLoading) {
+        if (isLoading) {
             progressBar.setVisibility(View.VISIBLE)
             dataContainer.setVisibility(View.GONE)
-        }
-        else{
+        } else {
             progressBar.setVisibility(View.GONE)
             dataContainer.setVisibility(View.VISIBLE)
         }
+    }
+
+    fun updateLanguageToEnglish(view: View?) {
+        val language = getData("language")
+        if (language !== null && language !== "en") {
+            setData("en")
+            getWeather()
+        }
+    }
+
+    fun updateLanguageToSpanish(view: View?) {
+        val language = getData("language")
+        if (language !== null && language !== "sp") {
+            setData("sp")
+            getWeather()
+        }
+    }
+
+    private fun getLanguage(): Int {
+        handleLoading(true)
+        val language = getData("language")
+        if (language !== null) {
+            if (language === "en") return R.array.english
+            else if (language === "sp") return R.array.spanish
+        }
+        handleLoading(false)
+        return R.array.english
     }
 }

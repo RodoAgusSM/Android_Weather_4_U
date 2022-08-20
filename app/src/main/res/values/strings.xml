@@ -19,6 +19,8 @@
         <item>Sunrise at: </item>
         <item>Sunset at: </item>
         <item>en</item>
+        <item>English</item>
+        <item>Spanish</item>
     </string-array>
     <string-array name="spanish">
         <item>°C</item>
@@ -33,6 +35,9 @@
         <item>Fecha:</item>
         <item>Clima en</item>
         <item>Amanece a las: </item>
+        <item>Oscurece a las: </item>
         <item>sp</item>
+        <item>Inglés</item>
+        <item>Español</item>
     </string-array>
 </resources>
