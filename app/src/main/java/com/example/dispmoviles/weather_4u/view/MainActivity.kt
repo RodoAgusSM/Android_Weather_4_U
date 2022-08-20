@@ -19,8 +19,8 @@ import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
-    val cityClass: City = City()
-    val calendar = Calendar.getInstance()
+    private val cityClass: City = City()
+    private val calendar: Calendar = Calendar.getInstance()
     var city: String = "Montevideo"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,13 +33,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getWeather() {
-        val weather_endpoint: String = getString(R.string.api_endpoint)
-        val api_key: String = getString(R.string.api_key)
-        val router: IRouterHTTPRequest? = RouterInstanceController().getRetrofitInstance(weather_endpoint)?.create(
+        val weatherEndpoint: String = getString(R.string.api_endpoint)
+        val apiKey: String = getString(R.string.api_key)
+        val router: IRouterHTTPRequest? = RouterInstanceController().getRetrofitInstance(weatherEndpoint)?.create(
             IRouterHTTPRequest::class.java
         )
         val coordinates = cityClass.getCityCoordinates(city)
-        router?.getWeather(coordinates?.getLat(), coordinates?.getLon(), "Metric", "sp", api_key)
+        router?.getWeather(coordinates?.getLat(), coordinates?.getLon(), "Metric", resources.getStringArray(R.array.english).get(13), apiKey)
             ?.enqueue(object : Callback<Forecast> {
                 override fun onResponse(
                     call: Call<Forecast>,
@@ -65,8 +65,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun getWeatherIcon(forecast: Forecast?) {
         val iconExtension = forecast?.getWeather()?.get(0)?.getIcon() + "@" + getString(R.string.icon_extension)
-        val weather_icon_endpoint : String = getString(R.string.api_icon)
-        val router: IRouterHTTPRequest? = RouterInstanceController().getRetrofitInstanceIcon(weather_icon_endpoint)?.create(
+        val weatherIconEndpoint : String = getString(R.string.api_icon)
+        val router: IRouterHTTPRequest? = RouterInstanceController().getRetrofitInstanceIcon(weatherIconEndpoint)?.create(
             IRouterHTTPRequest::class.java
         )
         router?.getWeatherIcon("application/json", iconExtension)
@@ -125,10 +125,10 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun generateWeatherIcon(icon: ResponseBody?) {
-        val weather_icon: ImageView = findViewById(R.id.weather_icon)
+        val weatherIcon: ImageView = findViewById(R.id.weather_icon)
         val iconBytes = icon?.bytes()
         val bitmap = iconBytes?.let { BitmapFactory.decodeByteArray(iconBytes, 0, it.size) }
-        weather_icon.setImageBitmap(bitmap)
+        weatherIcon.setImageBitmap(bitmap)
     }
 
     private fun fetchWeather() {
@@ -141,47 +141,50 @@ class MainActivity : AppCompatActivity() {
 
     private fun populateInterface(forecast: Forecast?){
         val location: TextView = findViewById(R.id.city)
-        location.setText(getResources().getStringArray(R.array.spanish).get(10) + " " + city)
+        location.setText(resources.getStringArray(R.array.english).get(10) + " " + city)
         val temp: TextView = findViewById(R.id.temp)
-        temp.setText(forecast?.getMain()?.getTemp().toString().split('.')[0] + " " + getResources().getStringArray(R.array.spanish).get(0))
+        temp.setText(forecast?.getMain()?.getTemp().toString().split('.')[0] + " " + resources.getStringArray(R.array.english).get(0))
         val feelsLike: TextView = findViewById(R.id.feels_like)
-        feelsLike.setText(getResources().getStringArray(R.array.spanish).get(1) + " " + forecast?.getMain()?.getFeelsLike().toString().split('.')[0] + getResources().getStringArray(R.array.spanish).get(0))
+        feelsLike.setText(resources.getStringArray(R.array.english).get(1) + " " + forecast?.getMain()?.getFeelsLike().toString().split('.')[0] + resources.getStringArray(R.array.english).get(0))
         val description: TextView = findViewById(R.id.description)
         description.setText(forecast?.getWeather()?.get(0)?.getDescription())
-        val humiduty: TextView = findViewById(R.id.humidity)
-        humiduty.setText(getResources().getStringArray(R.array.spanish).get(2) + " " + forecast?.getMain()?.getHumidity().toString().split('.')[0] + getResources().getStringArray(R.array.spanish).get(3))
+        val humidity: TextView = findViewById(R.id.humidity)
+        humidity.setText(resources.getStringArray(R.array.english).get(2) + " " + forecast?.getMain()?.getHumidity().toString().split('.')[0] + resources.getStringArray(R.array.english).get(3))
         val pressure: TextView = findViewById(R.id.pressure)
-        pressure.setText(getResources().getStringArray(R.array.spanish).get(4) + " " + forecast?.getMain()?.getPressure().toString().split('.')[0] + " " + getResources().getStringArray(R.array.spanish).get(5))
+        pressure.setText(resources.getStringArray(R.array.english).get(4) + " " + forecast?.getMain()?.getPressure().toString().split('.')[0] + " " + resources.getStringArray(R.array.english).get(5))
         val wind: TextView = findViewById(R.id.wind)
-        wind.setText(getResources().getStringArray(R.array.spanish).get(6) + " " + forecast?.getWind()?.windDirection() + " " + forecast?.getWind()?.windSpeed() + " " + getResources().getStringArray(R.array.spanish).get(7))
+        wind.setText(resources.getStringArray(R.array.english).get(6) + " " + forecast?.getWind()?.windDirection() + " " + forecast?.getWind()?.windSpeed() + " " + resources.getStringArray(R.array.english).get(7))
         val dateTime: Date = Date()
         calendar.time = dateTime
         val hours = calendar.get(Calendar.HOUR_OF_DAY)
         val minutes = calendar.get(Calendar.MINUTE)
-        var castedMin: String?
-        if(minutes < 10) castedMin = "0" + minutes.toString()
-        else castedMin = minutes.toString()
+        var castedMin: String? = if(minutes < 10) "0$minutes"
+        else minutes.toString()
         val day = calendar.get(Calendar.DATE)
-        val month = calendar.get(Calendar.MONTH)
+        val month = calendar.get(Calendar.MONTH) + 1
         val year = calendar.get(Calendar.YEAR)
         val parsedTime = "$hours:$castedMin"
         val time: TextView = findViewById(R.id.time)
-        time.setText(getResources().getStringArray(R.array.spanish).get(8) + " " + parsedTime)
+        time.setText(resources.getStringArray(R.array.english).get(8) + " " + parsedTime)
         val parsedDate = "$day/$month/$year"
         val date: TextView = findViewById(R.id.date)
-        date.setText(getResources().getStringArray(R.array.spanish).get(9) + " " + parsedDate)
+        date.setText(resources.getStringArray(R.array.english).get(9) + " " + parsedDate)
+        val sunrise: TextView = findViewById(R.id.sunrise)
+        sunrise.setText(resources.getStringArray(R.array.english).get(11) + " " + forecast?.getSys()?.sunsetSunriseTime(true))
+        val sunset: TextView = findViewById(R.id.sunset)
+        sunset.setText(resources.getStringArray(R.array.english).get(12) + " " + forecast?.getSys()?.sunsetSunriseTime(false))
     }
 
     private fun handleLoading(isLoading: Boolean) {
         val progressBar: ProgressBar = findViewById(R.id.progress_bar)
-        val data_container: LinearLayout = findViewById(R.id.data_container)
+        val dataContainer: LinearLayout = findViewById(R.id.data_container)
         if(isLoading) {
             progressBar.setVisibility(View.VISIBLE)
-            data_container.setVisibility(View.GONE)
+            dataContainer.setVisibility(View.GONE)
         }
         else{
             progressBar.setVisibility(View.GONE)
-            data_container.setVisibility(View.VISIBLE)
+            dataContainer.setVisibility(View.VISIBLE)
         }
     }
 }

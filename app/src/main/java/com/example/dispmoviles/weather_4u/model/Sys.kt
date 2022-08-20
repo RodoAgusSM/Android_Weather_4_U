@@ -1,6 +1,8 @@
 package com.example.dispmoviles.weather_4u.model
 
 import com.google.gson.annotations.SerializedName
+import java.text.SimpleDateFormat
+import java.util.*
 
 class Sys {
     @SerializedName("type")
@@ -56,5 +58,20 @@ class Sys {
 
     fun setSunset(sunset: Float?) {
         this.sunset = sunset
+    }
+
+    fun sunsetSunriseTime(whichOne: Boolean): String {
+       val ret = if(whichOne) {
+            val javaTimestamp = this.sunrise?.toLong()?.times(1000L)
+            val date = javaTimestamp?.let { Date(it) }
+            val dateTime: String = SimpleDateFormat("H:mm").format(date)
+            dateTime;
+        } else {
+            val javaTimestamp = this.sunset?.toLong()?.times(1000L)
+            val date = javaTimestamp?.let { Date(it) }
+            val dateTime: String = SimpleDateFormat("H:mm").format(date)
+            dateTime;
+        }
+        return ret;
     }
 }

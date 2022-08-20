@@ -2,7 +2,7 @@ package com.example.dispmoviles.weather_4u.model
 
 
 class City {
-    val cities = mapOf("Montevideo" to Coordinates(-34.8335, 56.1674),
+    val cities = mapOf("Montevideo" to Coordinates(-34.8335, -56.1674),
         "Punta del Este" to Coordinates(-34.9667,-54.95),
         "Colonia" to Coordinates(-34.1667, -57.5),
         "Canelones" to Coordinates(-34.5228, -56.2778),
