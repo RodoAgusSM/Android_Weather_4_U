@@ -1,6 +1,6 @@
 # Android_Weather_4_U
 
-<img src='./videoDemo/android_weather_web.gif' width='550' height='550'>
+<img src='./videoDemo/android_weather.gif' width='255' height='500'>
 
 ## <u> General </u>
 Mobile application made in Kotlin to view the weather of the departments of Uruguay and some cities in the world.
