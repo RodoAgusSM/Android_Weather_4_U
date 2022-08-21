@@ -28,7 +28,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        handleLoading(true)
         getWeather();
         generateSpinner();
         fetchWeather();
@@ -54,6 +53,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getWeather() {
+        handleLoading(true)
         val weatherEndpoint: String = getString(R.string.api_endpoint)
         val apiKey: String = getString(R.string.api_key)
         val router: IRouterHTTPRequest? =
@@ -170,6 +170,7 @@ class MainActivity : AppCompatActivity() {
     private fun fetchWeather() {
         Timer().scheduleAtFixedRate(object : TimerTask() {
             override fun run() {
+                handleLoading(true)
                 getWeather()
             }
         }, 0, 1200000)
@@ -276,7 +277,6 @@ class MainActivity : AppCompatActivity() {
             if (language === "en") return R.array.english
             else if (language === "sp") return R.array.spanish
         }
-        handleLoading(false)
         return R.array.english
     }
 }
